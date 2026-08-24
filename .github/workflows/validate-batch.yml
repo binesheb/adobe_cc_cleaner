@@ -24,6 +24,12 @@ jobs:
           if (-not (Test-Path 'AdobeCreativeCloudCleanerTool.exe')) {
             throw 'Bundled cleaner executable is missing.'
           }
-      - name: Validate batch syntax
-        shell: cmd
-        run: cccleaner.bat >nul 2>&1
+      - name: Validate destructive commands are not hidden
+        shell: pwsh
+        run: |
+          $content = Get-Content 'cccleaner.bat' -Raw
+          foreach ($command in 'takeown', 'icacls', 'del /f /q', 'rmdir /s /q', '--removeAll=ALL') {
+            if ($content -notmatch [regex]::Escape($command)) {
+              throw "Expected command missing: $command"
+            }
+          }
