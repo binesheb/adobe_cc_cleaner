@@ -1,0 +1,29 @@
+name: Validate batch helper
+
+on:
+  push:
+    paths:
+      - 'cccleaner.bat'
+      - '.github/workflows/validate-batch.yml'
+  pull_request:
+    paths:
+      - 'cccleaner.bat'
+      - '.github/workflows/validate-batch.yml'
+
+permissions:
+  contents: read
+
+jobs:
+  validate:
+    runs-on: windows-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Verify bundled cleaner is present
+        shell: pwsh
+        run: |
+          if (-not (Test-Path 'AdobeCreativeCloudCleanerTool.exe')) {
+            throw 'Bundled cleaner executable is missing.'
+          }
+      - name: Validate batch syntax
+        shell: cmd
+        run: cccleaner.bat >nul 2>&1
