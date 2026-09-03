@@ -1,6 +1,13 @@
 @echo off
 setlocal enabledelayedexpansion
 
+net session >nul 2>&1
+if errorlevel 1 (
+    echo ERROR: This cleanup helper must be run from an elevated Administrator Command Prompt.
+    echo No cleanup actions were started.
+    exit /b 1
+)
+
 .\AdobeCreativeCloudCleanerTool.exe
 
 echo Deleting Adobe files and subfolders...
