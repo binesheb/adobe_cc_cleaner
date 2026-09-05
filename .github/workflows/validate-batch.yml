@@ -33,3 +33,16 @@ jobs:
               throw "Expected command missing: $command"
             }
           }
+      - name: Verify elevation guard precedes cleanup
+        shell: pwsh
+        run: |
+          $content = Get-Content 'cccleaner.bat' -Raw
+          $guard = $content.IndexOf('net session', [System.StringComparison]::OrdinalIgnoreCase)
+          $exit = $content.IndexOf('exit /b 1', [System.StringComparison]::OrdinalIgnoreCase)
+          $cleanup = $content.IndexOf('takeown', [System.StringComparison]::OrdinalIgnoreCase)
+          if ($guard -lt 0 -or $exit -lt 0 -or $cleanup -lt 0) {
+            throw 'Elevation guard or cleanup command is missing.'
+          }
+          if ($guard -gt $cleanup -or $exit -gt $cleanup) {
+            throw 'Elevation failure path must occur before destructive cleanup.'
+          }
