@@ -14,6 +14,7 @@ The project follows [Semantic Versioning](https://semver.org/).
 
 - Kept CI validation non-destructive so repository checks cannot run the cleanup workflow.
 - Added an administrator preflight so the destructive helper aborts before cleanup when it is not running elevated.
+- Abort cleanup if the bundled Adobe cleaner is missing or its initial launch fails, preventing the broad filesystem cleanup from continuing after a failed cleaner preflight.
 
 ## [0.1.1] - 2026-08-20
 
