@@ -46,3 +46,17 @@ jobs:
           if ($guard -gt $cleanup -or $exit -gt $cleanup) {
             throw 'Elevation failure path must occur before destructive cleanup.'
           }
+      - name: Verify cleaner preflight aborts before cleanup
+        shell: pwsh
+        run: |
+          $content = Get-Content 'cccleaner.bat' -Raw
+          $preflight = $content.IndexOf('if not exist "%cleaner%"', [System.StringComparison]::OrdinalIgnoreCase)
+          $preflightExit = $content.IndexOf('echo No cleanup actions were started.', [System.StringComparison]::OrdinalIgnoreCase)
+          $launch = $content.IndexOf('"%cleaner%"', [System.StringComparison]::OrdinalIgnoreCase)
+          $cleanup = $content.IndexOf('takeown', [System.StringComparison]::OrdinalIgnoreCase)
+          if ($preflight -lt 0 -or $preflightExit -lt 0 -or $launch -lt 0 -or $cleanup -lt 0) {
+            throw 'Cleaner preflight, launch, or cleanup command is missing.'
+          }
+          if ($preflight -gt $cleanup -or $preflightExit -gt $cleanup) {
+            throw 'Missing-cleaner failure path must occur before destructive cleanup.'
+          }
