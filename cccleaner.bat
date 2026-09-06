@@ -8,7 +8,19 @@ if errorlevel 1 (
     exit /b 1
 )
 
-.\AdobeCreativeCloudCleanerTool.exe
+set "cleaner=%~dp0AdobeCreativeCloudCleanerTool.exe"
+if not exist "%cleaner%" (
+    echo ERROR: AdobeCreativeCloudCleanerTool.exe was not found next to this script.
+    echo No cleanup actions were started.
+    exit /b 1
+)
+
+"%cleaner%"
+if errorlevel 1 (
+    echo ERROR: The Adobe Creative Cloud Cleaner Tool could not be started successfully.
+    echo No additional cleanup actions were started.
+    exit /b 1
+)
 
 echo Deleting Adobe files and subfolders...
 
@@ -33,5 +45,5 @@ for /d /r "%folder%" %%B in (adobe*) do (
 )
 
 echo Deletion complete.
-.\AdobeCreativeCloudCleanerTool.exe --removeAll=ALL
+"%cleaner%" --removeAll=ALL
 pause
