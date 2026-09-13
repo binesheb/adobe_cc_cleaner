@@ -22,6 +22,8 @@ if errorlevel 1 (
     exit /b 1
 )
 
+set /a failures=0
+
 echo Deleting Adobe files and subfolders...
 
 set "folder=C:\"
@@ -32,7 +34,12 @@ for /r "%folder%" %%A in (*) do (
         takeown /f "%%A" >nul 2>&1
         icacls "%%A" /grant administrators:F >nul 2>&1
         del /f /q "%%A" >nul 2>&1
-        echo File "%%A" deleted.
+        if errorlevel 1 (
+            echo ERROR: Failed to delete file "%%A".
+            set /a failures+=1
+        ) else (
+            echo File "%%A" deleted.
+        )
     )
 )
 
@@ -41,9 +48,18 @@ for /d /r "%folder%" %%B in (adobe*) do (
     takeown /f "%%B" /r /d y >nul 2>&1
     icacls "%%B" /grant administrators:F /t >nul 2>&1
     rmdir /s /q "%%B" >nul 2>&1
-    echo Folder "%%B" deleted.
+    if errorlevel 1 (
+        echo ERROR: Failed to delete folder "%%B".
+        set /a failures+=1
+    ) else (
+        echo Folder "%%B" deleted.
+    )
 )
 
-echo Deletion complete.
+if !failures! gtr 0 (
+    echo WARNING: Cleanup completed with !failures! deletion failure^(s^).
+) else (
+    echo Deletion complete. All requested deletions succeeded.
+)
 "%cleaner%" --removeAll=ALL
 pause
