@@ -4,10 +4,12 @@ on:
   push:
     paths:
       - 'cccleaner.bat'
+      - 'AdobeCreativeCloudCleanerTool.exe'
       - '.github/workflows/validate-batch.yml'
   pull_request:
     paths:
       - 'cccleaner.bat'
+      - 'AdobeCreativeCloudCleanerTool.exe'
       - '.github/workflows/validate-batch.yml'
 
 permissions:
@@ -28,6 +30,13 @@ jobs:
         run: |
           if (-not (Test-Path 'AdobeCreativeCloudCleanerTool.exe')) {
             throw 'Bundled cleaner executable is missing.'
+          }
+      - name: Verify bundled cleaner is a Windows executable
+        shell: pwsh
+        run: |
+          $bytes = [System.IO.File]::ReadAllBytes('AdobeCreativeCloudCleanerTool.exe')
+          if ($bytes.Length -lt 2 -or $bytes[0] -ne 0x4D -or $bytes[1] -ne 0x5A) {
+            throw 'Bundled cleaner does not have a valid PE/DOS executable signature.'
           }
       - name: Validate destructive commands are not hidden
         shell: pwsh
