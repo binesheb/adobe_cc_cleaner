@@ -61,5 +61,15 @@ if !failures! gtr 0 (
 ) else (
     echo Deletion complete. All requested deletions succeeded.
 )
+
 "%cleaner%" --removeAll=ALL
+set "cleaner_exit=!errorlevel!"
+if not "!cleaner_exit!"=="0" (
+    echo ERROR: Adobe Creative Cloud Cleaner Tool reported exit code !cleaner_exit!.
+)
+
+if !failures! gtr 0 exit /b 1
+if not "!cleaner_exit!"=="0" exit /b !cleaner_exit!
+
 pause
+exit /b 0
