@@ -16,6 +16,16 @@ if not exist "%cleaner%" (
 )
 
 set "dry_run=0"
+if not "%~2"=="" (
+    echo ERROR: Too many arguments.
+    echo Usage: cccleaner.bat [--dry-run]
+    exit /b 2
+)
+if not "%~1"=="" if /i not "%~1"=="--dry-run" (
+    echo ERROR: Unknown option "%~1".
+    echo Usage: cccleaner.bat [--dry-run]
+    exit /b 2
+)
 if /i "%~1"=="--dry-run" set "dry_run=1"
 if !dry_run! equ 1 echo DRY RUN: no files will be changed and the Adobe cleaner will not be executed.
 
