@@ -10,6 +10,7 @@ The project follows [Semantic Versioning](https://semver.org/).
 
 - Added a least-privilege Windows CI workflow that verifies the bundled cleaner is present and checks that the batch helper still contains its explicit destructive operations without executing them.
 - Added `--dry-run` mode to enumerate matching Adobe files and folders without changing files or executing the bundled cleaner.
+- Added an explicit interactive confirmation before destructive cleanup starts.
 
 ### Fixed
 
