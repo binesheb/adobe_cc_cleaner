@@ -30,6 +30,14 @@ if /i "%~1"=="--dry-run" set "dry_run=1"
 if !dry_run! equ 1 echo DRY RUN: no files will be changed and the Adobe cleaner will not be executed.
 
 if !dry_run! equ 0 (
+    echo WARNING: This operation can take ownership of and permanently delete files and folders under C:\.
+    echo It will also run the bundled Adobe Creative Cloud Cleaner Tool with --removeAll=ALL.
+    echo Review cccleaner.bat and ensure you have a backup or restore point before continuing.
+    choice /c YN /n /m "Continue with destructive cleanup? [Y/N]: "
+    if errorlevel 2 (
+        echo Cleanup cancelled. No destructive actions were started.
+        exit /b 3
+    )
     "%cleaner%"
     if errorlevel 1 (
         echo ERROR: The Adobe Creative Cloud Cleaner Tool could not be started successfully.
